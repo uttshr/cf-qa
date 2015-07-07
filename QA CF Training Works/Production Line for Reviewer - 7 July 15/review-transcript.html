@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Review Transcript</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/fontawesome/4.3.0/css/font-awesome.min.css" />
+  <link rel="stylesheet" type="text/css" href="//cfexternals.s3.amazonaws.com/css/cf-boilerplate-3.0.1.css" />
+  <link rel="stylesheet" type="text/css" href="//cfexternals.s3.amazonaws.com/speakertext/assets/cf.audio.player.css" />
+  <link rel="stylesheet" type="text/css" href="//cfexternals.s3.amazonaws.com/speakertext/assets/review-transcript.css" />
+</head>
+
+<body>
+  <div id="wi-wrap">
+    <div id="wi-inner" class="row">
+      <div id="container" class="col-xs-12">
+        <header>
+          <div class="row">
+            <div class="col-xs-12">
+              <h1>Review Transcript</h1>
+            </div>
+            <div class="col-xs-12">
+              <div class="info-line">
+                <p>
+                  Rate the quality of the transcript.Check all the problem areas that apply.
+                </p>
+              </div>
+            </div>
+          </div>
+        </header>
+        <div class="row">
+          <div class="col-xs-12">
+            <div class="row">
+              <div class="col-xs-6">
+                <p id="worker-id">Worker ID : </p>
+                <br>
+                <p id="team-name">Team Name : </p>
+                <br>
+                <p id="date-join">Date Joined : </p>
+                <br>
+              </div>
+              <div class="col-xs-6">
+                <p id="worker-name">Worker Name : </p>
+                <br>
+                <p id="wfo">WFO : </p>
+                <br>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xs-6">
+                <div id="sound-container">
+                  <div class="audio-wrapper"></div>
+                </div>
+              </div>
+              <div class="col-xs-6">
+                <div class="shortcut">
+                  <label class="header">KEYBOARD CONTROLS</label>
+                  <div id="shortcut_help">
+                    <ul id="shortcuts">
+                      <li><span class="st-key">CTRL + SPACE</span><span class="text">Toggle Play/Pause</span></li>
+                      <li><span class="st-key">CTRL + SHIFT + <span class="arrow-pointer-left">&uarr;</span></span><span class="text">Decrease Audio Speed</span></li>
+                      <li><span class="st-key">CTRL + SHIFT + <span class="arrow-pointer-right">&uarr;</span></span><span class="text">Increase Audio Speed</span></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xs-12">
+                <div class="row">
+                  <div class="col-xs-12 gaps">
+                    <div class="form-group">
+                      <textarea id="full-text" rows="5" class="form-control" readonly></textarea>
+                    </div>
+                  </div>
+                  <form id="cf-task-form">
+                    <div class="col-xs-3 gaps">
+                      <select name="output[quality]" id="quality" class="form-control">
+                        <option value=" " selected>-Select One-</option>
+                        <option value="Malicious">Malicious</option>
+                        <option value="Careless">Careless</option>
+                        <option value="Poor">Poor</option>
+                        <option value="Good">Good</option>
+                        <option value="Excellent">Excellent</option>
+                      </select>
+                    </div>
+                    <div class="col-xs-12 gaps">
+                      <div class="row">
+                        <div class="form-group">
+                          <div class="col-xs-3" id="business-rules">
+                            <label for="business-rules">Business Rules</label>
+                          </div>
+                          <div class="col-xs-3" id="grammar">
+                            <label for="grammar">Grammar</label>
+                          </div>
+                          <div class="col-xs-3" id="labels">
+                            <label for="labels">Labels</label>
+                          </div>
+                          <div class="col-xs-3" id="web-research">
+                            <label for="web-research">Web Research</label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-xs-12 gaps">
+                      <input type="button" id="submit-btn" value="Submit" class="btn floatR">
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="clear"></div>
+  </div>
+  <script type="text/javascript" src="//cdn.jsdelivr.net/jquery/1.9.1/jquery-1.9.1.min.js"></script>
+  <script type="text/javascript" src="//cdn.jsdelivr.net/jquery.ui/1.9.2/jquery-ui.custom.min.js"></script>
+  <script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="//cdn.jsdelivr.net/bootbox/4.3.0/bootbox.min.js"></script>
+  <script type="text/javascript" src="//cdn.jsdelivr.net/lodash/2.4.1/lodash.min.js"></script>
+  <script type="text/javascript" src="//cfexternals.s3.amazonaws.com/speakertext/assets/audiotranscription-pubsub.js"></script>
+  <script type="text/javascript" src="//cfexternals.s3.amazonaws.com/speakertext/assets/cf-audiotranscription.js"></script>
+  <script type="text/javascript" src="//cfexternals.s3.amazonaws.com/speakertext/assets/review-transcript.js"></script>
+  
+  <script type="text/template" id="checkbox-template">
+    <div class="checkbox-inline">
+      <input type="checkbox" name="<%= rt.name %>" value="<%= rt.value %>" id="<%= rt.id %>" class="regular-checkbox" />
+      <label for="<%= rt.id %>"><%= rt.show %></label> 
+    </div>
+    <br>
+  </script>
+
+  <script id="data_container" rel="script" type="text/template">
+
+  window.ST = {};
+
+  // PRODUCTION
+  ST.audio_url   = decodeURIComponent('{{audio_uri}}');
+  ST.audio_title  = '{{audio_title}}';  
+  ST.worker_id = '{{worker_id}}';
+  ST.full_text = '{{full_text}}';
+  ST.joined = '{{joined}}';
+  ST.name = '{{name}}';
+  ST.team = '{{team}}';
+  ST.wfo = '{{wfo}}';
+
+  // LOCAL TESTING
+  // ST.audio_url = "http://cfexternals.s3.amazonaws.com/speakertext/onboarding/section1/1.1.mp3";
+  // ST.full_text = "I like all vegetables.| I am allergic to it as it kills my throat. | Sometimes my throat also itches when I eat my grandmother's chicken soup.";
+  // ST.audio_title = 'The Cloudfactory';
+  // ST.worker_id = "worker id";
+  // ST.joined = 'date joined';
+  // ST.name = 'worker name';
+  // ST.team = 'team name';
+  // ST.wfo = 'wfo';
+
+  //Ready to fire ready event of document
+  jQuery.holdReady(false);
+  </script>
+</body>
+
+</html>
